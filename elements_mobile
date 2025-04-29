@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>詞彙元素小宇宙</title>
+    <style>
+        /* 新增背景變化樣式 */
+        .background-stage-1 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-1.png'); /* 簡單草地 */
+        }
+        .background-stage-2 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-2.png'); /* 加入山脈 */
+        }
+        .background-stage-3 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-3.png'); /* 加入海洋 */
+        }
+        .background-stage-4 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-4.png'); /* 加入動物 */
+        }
+        .background-stage-5 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-5.png'); /* 加入人類和建築物 */
+        }
+        .background-stage-6 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-6.png'); /* 加入更多城市建築 */
+        }
+        .background-stage-7 {
+            background-image: url('https://kei4di1.github.io/nihongo_learning/assets/Stage-7.png'); /* 最終階段 */
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            max-width: 600px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            animation: fadeIn 1s ease-in-out;
+        }
+        .left-column, .right-column {
+            padding: 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .right-column {
+            overflow-y: auto;
+            max-height: 40vh;
+        }
+        .elements, .combinations {
+            margin-top: 20px;
+        }
+        h1, h2 {
+            color: #333;
+            animation: slideIn 1s ease-in-out;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        select {
+            padding: 10px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: #f0f0f0;
+            height: 20px;
+            border-top: 1px solid #ccc;
+        }
+        .progress {
+            height: 100%;
+            background-color: #4CAF50;
+            transition: width 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0); }
+        }
+        /* 新增閃爍效果 */
+        .flash {
+            animation: flash 1s infinite;
+        }
+        @keyframes flash {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="left-column">
+            <h1>詞彙元素小宇宙</h1>
+            <div class="combinations">
+                <h2>要素を合成:</h2>
+                <select id="element1"></select>
+                <select id="element2"></select>
+                <br><br>
+                <button onclick="combineElements()">合成</button>
+                <p id="combineResult"></p>
+            </div>
+        </div>
+        <div class="right-column">
+            <h2>あなたの持っている要素:</h2>
+            <p id="elementCount"></p>
+            <ul id="elementList"></ul>
+        </div>
+    </div>
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+    <script>
+        // 基本元素（僅四個）
+        const elements = {
+            '水': ['みず', '💧'],
+            '火': ['ひ', '🔥'],
+            '風': ['かぜ', '🍃'],
+            '土': ['つち', '🌱']
+        };
+        // 合成規則（共 100 條）
+const combinations = {
+    // 自然類
+    "水火": ['蒸気', 'じょうき', '💨'], // 水 + 火 → 蒸気
+    "水水": ['海', 'うみ', '🌊'], // 水 + 水 → 海
+    "土土": ['山', 'やま', '⛰️'], // 土 + 土 → 山
+    "火火": ['炎', 'ほのお', '🔥'], // 火 + 火 → 炎
+    "風風": ['嵐', 'あらし', '🌪️'], // 風 + 風 → 嵐
+    "水土": ['生命', 'せいめい', '🌱'], // 水 + 土 → 生命
+    "生命土": ['樹', 'き', '🌳'], // 生命 + 土 → 樹
+    "樹樹": ['森林', 'しんりん', '🌲'], // 樹 + 樹 → 森林
+    "生命海": ['魚', 'さかな', '🐟'], // 生命 + 海 → 魚
+    "生命山": ['羊', 'ひつじ', '🐑'], // 生命 + 山 → 羊
+    "生命樹": ['猿', 'さる', '🐒'], // 生命 + 樹 → 猿
+    "海風": ['波', 'なみ', '🌊'], // 海 + 風 → 波
+    "樹水": ['果物', 'くだもの', '🍎'], // 樹 + 水 → 果物
+    "生命風": ['花粉', 'かふん', '🌼'], // 生命 + 風 → 花粉
+    "火土": ['陶器', 'とうき', '🏺'], // 火 + 土 → 陶器
+    "火風": ['煙', 'けむり', '💨'], // 火 + 風 → 煙
+    "風土": ['砂漠', 'さばく', '🏜️'], // 風 + 土 → 砂漠
+    "煙土": ['瓦', 'かわら', '🏠'], // 煙 + 土 → 瓦
+    "砂炎": ['ガラス', 'がらす', '🌟'], // 砂 + 炎 → ガラス
+    "火光": ['太陽', 'たいよう', '☀️'], // 火 + 光 → 太陽
+    "砂火": ['煉瓦', 'れんが', '🧱'], // 砂 + 火 → 磚
+    "砂漠風": ['砂', 'すな', '🏝️'], 
+    "煉瓦煉瓦": ['壁', 'かべ', '🧱'], // 煉瓦 + 煉瓦 → 壁
+    "壁壁": ['建物', 'たてもの', '🏠'], // 壁 + 壁 → 建物
+    "建物建物": ['町', 'まち', '🏘️'], // 建物 + 建物 → 町
+    "町町": ['都市', 'とし', '🏙️'], // 町 + 町 → 都市
+    "都市都市": ['國家', 'こっか', '🌎'], // 都市 + 都市 → 國家
+    "國家國家": ['世界', 'せかい', '🌍'], // 國家 + 國家 → 世界
+    "樹建物": ['樹屋', 'じゅうや', '🌳🏠'], // 樹 + 建物 → 樹屋
+    "果物猿": ['バナナ', 'ばなな', '🍌'], // 果物 + 猿 → 香蕉
+    "砂海": ['海岸', 'かいがん', '🏖️'], // 砂 + 海 → 海岸
+    "道路生命": ['馬', 'うま', '🐎'], // 砂 + 海 → 海岸
+    "水太陽": ['虹', 'にじ', '🌈'], // 水 + 太陽 → 虹
+    "海馬": ['セーラー', 'せーらー', '🐬'], // 海 + 馬 → 海馬
+
+
+    // 工具類
+    "火山": ['金属', 'きんぞく', '⚙️'], // 火 + 山 → 金属
+    "樹金属": ['木材', 'もくざい', '🪵'], // 樹 + 金属 → 木材
+    "木材金属": ['道具', 'どうぐ', '🛠️'], // 木材 + 金属 → 道具
+    "道具金属": ['機械', 'きかい', '🤖'], // 道具 + 金属 → 機械
+    "樹道具": ['家具', 'かぐ', '🛋️'], // 樹 + 道具 → 家具
+    "機械木材": ['車', 'くるま', '🚗'], // 機械 + 木材 → 車
+    "木材海": ['船', 'ふね', '⛵'], // 木材 + 海 → 船
+    "道具風": ['風車', 'ふうしゃ', '🪐'], // 道具 + 風 → 風車
+    "機械建物": ['エレベーター', 'えれべーたー', '🛗'], // 機械 + 道具 → エレベーター
+    "木材ガラス": ['窓', 'まど', '🪟'], // 板 + 金属 → 窓
+    "車土": ['道路', 'どうろ', '🛣️'], // 車 + 車 → 道路
+    "金属火": ['炉', 'ろ', '🔥'], // 金属 + 火 → 炉
+    "嵐金属": ['風鈴', 'ふうりん', '🔔'], // 嵐 + 金属 → 風鈴
+    "風金属": ['プロペラ', 'ぷろぺら', '🌀'], // 風 + 金属 → プロペラ
+    "プロペラ海": ['フェリー', 'ふぇりー', '⛴️'], // プロペラ + 海 → フェリー
+    "紙紙": ['本', 'ほん', '📚'], // 紙 + 紙 → 本
+    "本本": ['図書館', 'としょかん', '📖'], // 本 + 本 → 図書館
+    "本木材": ['本棚', 'ほんだな', '🗄️'], // 
+    "火電池": ['光', 'ひかり', '💡'], // 火 + 電池 → 光
+    "ガラス光": ['レンズ', 'れんず', '📸'], // ガラス + 光 → レンズ
+
+    // 社會類
+    "生命火": ['料理', 'りょうり', '🍖'], // 生命 + 火 → 料理
+    "生命金属": ['電池', 'でんち', '🔋'], // 生命 + 金属 → 電池
+    "山建物": ['城', 'しろ', '🏰'], // 山 + 道具 → 城
+    "道具電池": ['テクノロジー', 'てくのろじー', '💻'], // 道具 + 電池 → テクノロジー
+    "テクノロジー機械": ['コンピューター', 'こんぴゅーたー', '🖥️'], // テクノロジー + 機械 → コンピューター
+    "木材水": ['紙', 'かみ', '📄'], // 木材 + 水 → 紙
+    "本生命": ['文化', 'ぶんか', '🎎'], // 紙 + 生命 → 文化
+    "文化機械": ['テレビ', 'てれび', '📺'], // 文化 + 機械 → テレビ
+    "テレビ風": ['ラジオ', 'らじお', '📻'], // テレビ + 風 → ラジオ
+    "木材道具": ['椅子', 'いす', '🪑'], // 木材 + 道具 → 椅子
+    "猿道具": ['人間', 'にんげん', '👤'], // 猿 + 道具 → 人間（象徴人間学会使用道具）
+    "人間人間": ['愛情', 'あいじょう', '❤️'], // 人間 + 人間 → 愛情
+    "人間紙": ['歴史', 'れきし', '📜'], // 人間 + 紙 → 歴史
+    "写真家紙": ['写真', 'しゃしん', '📸'], // 写真家 + 光 → 写真
+    "愛情紙": ['恋文', 'こいぶみ', '💌'], // 愛情 + 紙 → 情書
+    "愛情本": ['ロマンス', 'ろまんす', '📚'], // 愛情 + 本 → ロマンス
+    "文化建物": ['博物館', 'はくぶつかん', '🏛️'], // 文化 + 建物 → 博物館
+    "金属文化": ['お金', 'おかね', '💰'], // 金属 + 文化 → 錢
+    "お金建物": ['銀行', 'ぎんこう', '🏦'], // 錢 + 建物 → 銀行
+    "ガラス水": ['グラス', 'ぐらす', '🍹'], // ガラス + 水 → グラス
+
+    // 職業類
+    "人間木材": ['大工', 'だいこ', '🪚'], // 人間 + 木材 → 大工
+    "人間道具": ['職人', 'しょくにん', '🔧'], // 人間 + 道具 → 職人
+    "人間コンピューター": ['プログラマー', 'ぷろぐらまー', '👨‍💻'], // 人間 + コンピューター → プログラマー
+    "人間車": ['運転手', 'うんてんしゅ', '🚗'], // 人間 + 車 → 運転手
+    "人間建物": ['建築家', 'けんちくか', '👷'], // 人間 + ビル → 建築家
+    "人間テクノロジー": ['科学者', 'かがくしゃ', '🔬'], // 人間 + テクノロジー → 科学者
+    "人間本": ['教師', 'きょうし', '👩‍🏫'], // 人間 + 本 → 教師
+    "人間船": ['船員', 'せんいん', '⛵'], // 人間 + 船 → 船員
+    "人間テレビ": ['俳優', 'はいゆう', '🎭'], // 人間 + テレビ → 俳優
+    "人間嵐": ['パイロット', 'ぱいろっと', '✈️'], // 人間 + 嵐 → パイロット
+    "人間図書館": ['図書館員', 'としょかんいん', '📚'], // 人間 + 図書館 → 図書館員
+    "人間教師": ['学生', 'がくせい', '👩‍🎓'], // 人間 + 教師 → 学生
+    "人間レンズ": ['写真家', 'しゃしんか', '📸'], // 人間 + レンズ → 写真家
+    "人間お金": ['富豪', 'ふごう', '💰'], // 人間 + お金 → 富豪
+    "人間城": ['国王', 'こくおう', '👑'], // 人間 + 城 → 国王
+    "人間馬": ['騎手', 'きしゅ', '🏇'], // 人間 + 馬 → 騎手
+    "人間料理": ['料理人', 'りょうりにん', '👨‍🍳'], // 人間 + 料理 → 料理人
+    "料理建物": ['レストラン', 'レストラン', '🍽️'], // 料理 + 建物 → レストラン
+    "人間魚": ['人魚', 'にんぎょ', '🧜‍♀️'], // 人間 + 魚 → 人魚
+    "人間火": ['消防士', 'しょうぼうし', '👨‍🚒'], // 人間 + 火 → 消防士
+    "消防士車": ['消防車', 'しょうぼうしゃ', '🚒'], // 消防士 + 車 → 消防車
+    "人間土": ['農夫', 'のうふ', '👨‍🌾'], // 人間 + 土 → 農夫
+};
+
+        let playerElements = ['水', '火', '土', '風'];
+        let learnedWords = {};
+
+        function updateBackground() {
+            const body = document.body;
+            const totalElements = Object.keys(combinations).length + 4;
+            const progressPercentage = (playerElements.length / totalElements) * 100;
+            if (progressPercentage < 15) {
+                body.className = 'background-stage-1';
+            } else if (progressPercentage < 30) {
+                body.className = 'background-stage-2';
+            } else if (progressPercentage < 45) {
+                body.className = 'background-stage-3';
+            } else if (progressPercentage < 60) {
+                body.className = 'background-stage-4';
+            } else if (progressPercentage < 75) {
+                body.className = 'background-stage-5';
+            } else if (progressPercentage < 90) {
+                body.className = 'background-stage-6';
+            } else {
+                body.className = 'background-stage-7';
+            }
+        }
+
+        function displayElements() {
+            const elementList = document.getElementById('elementList');
+            elementList.innerHTML = '';
+            playerElements.forEach(element => {
+                const li = document.createElement('li');
+                li.textContent = `${element} (${elements[element][0]}) ${elements[element][1]}`;
+                elementList.appendChild(li);
+            });
+            const elementCount = document.getElementById('elementCount');
+            elementCount.textContent = `要素の数: ${playerElements.length}`;
+            updateProgressBar();
+            updateBackground(); // 更新背景
+        }
+
+        function displayCombinationOptions() {
+            const element1 = document.getElementById('element1');
+            const element2 = document.getElementById('element2');
+            element1.innerHTML = '';
+            element2.innerHTML = '';
+            playerElements.forEach((element, index) => {
+                const option1 = document.createElement('option');
+                option1.value = element;
+                option1.textContent = `${element} (${elements[element][0]}) ${elements[element][1]}`;
+                element1.appendChild(option1);
+                const option2 = document.createElement('option');
+                option2.value = element;
+                option2.textContent = `${element} (${elements[element][0]}) ${elements[element][1]}`;
+                element2.appendChild(option2);
+            });
+        }
+
+        function combineElements() {
+            const element1 = document.getElementById('element1').value;
+            const element2 = document.getElementById('element2').value;
+            const combineResult = document.getElementById('combineResult');
+            const key1 = element1 + element2;
+            const key2 = element2 + element1;
+            if ((combinations[key1] && !learnedWords[combinations[key1][0]]) ||
+                (combinations[key2] && !learnedWords[combinations[key2][0]])) {
+                const [newElement, newWord, newEmoji] = combinations[key1] || combinations[key2];
+                if (playerElements.includes(newElement)) {
+                    combineResult.textContent = 'この要素はすでに存在します。他の要素を選んでください。';
+                } else {
+                    combineResult.innerHTML = `合成成功！新しい要素: <strong style="color: green;" class="flash">${newElement} (${newWord}) ${newEmoji}</strong>`;
+                    playerElements.unshift(newElement);
+                    elements[newElement] = [newWord, newEmoji];
+                    learnedWords[newElement] = [newWord, newEmoji];
+                    displayElements();
+                    displayCombinationOptions();
+                }
+            } else {
+                combineResult.textContent = '合成失敗、他の要素を選んでください。';
+            }
+        }
+
+        function updateProgressBar() {
+            const progress = document.getElementById('progress');
+            const totalElements = Object.keys(combinations).length + 4;
+            const progressPercentage = (playerElements.length / totalElements) * 100;
+            progress.style.width = `${progressPercentage}%`;
+        }
+
+        displayElements();
+        displayCombinationOptions();
+    </script>
+</body>
+</html>
