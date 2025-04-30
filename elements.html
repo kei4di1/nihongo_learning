@@ -50,15 +50,14 @@
             margin-bottom: 4%;
         }
         .left-column {
-            width: 60%;
-            padding: 50px;
+            width: 55%;
+            padding: 4%;
             border-right: 1px solid #ccc;
         }
         .right-column {
-            width: 40%;
-            padding: 50px;
+            width: 45%;
+            padding: 4%;
             overflow-y: auto;
-            max-height: calc(100vh - 550px);
         }
         .elements, .combinations {
             margin-top: 20px;
@@ -73,29 +72,29 @@
             color: #505050;
         }
         button {
-            font-size: 18px; /* 設定按鈕字體大小 */
+            font-size: 110%; /* 設定按鈕字體大小 */
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 2.5%;
             cursor: pointer;
-            border-radius: 13px;
+            border-radius: 10px;
             transition: background-color 0.3s;
-            margin-left: 10px;
-            height: 50px; /* 設定高度 */
-            width: 75px; /* 設定寬度 */
+            height: 2.5%; /* 設定高度 */
+            width: 30%; /* 設定寬度 */
+            margin-left: 2%;
         }
         button:hover {
             background-color: #45a049;
         }
         select {
-            margin-right: 13px;
-            border-radius: 5px;
+            margin-right: 2%;
+            border-radius: 10px;
             border: 2px solid #ccc;
-            width: 150px; /* 設定寬度 */
-            height: 50px; /* 設定高度 */
-            font-size: 16px; /* 設定字體大小 */
-            padding: 8px; /* 設定內邊距 */
+            width: 30%; /* 設定寬度 */
+            height: 2.5%; /* 設定高度 */
+            font-size: 110%; /* 設定字體大小 */
+            padding: 2.5%; /* 設定內邊距 */
         }
         ul {
             list-style-type: none;
@@ -373,22 +372,6 @@ const combinations = {
             });
         }
 
-function createLightDots() {
-    const body = document.body;
-    const numDots = 85; // 光點數量
-    for (let i = 0; i < numDots; i++) {
-        const dot = document.createElement('div');
-        dot.classList.add('light-dot');
-        const size = Math.random() * 12 + 2; // 隨機大小
-        dot.style.width = `${size}px`;
-        dot.style.height = `${size}px`;
-        dot.style.borderRadius = '50%'; // 設置為圓形
-        dot.style.top = `${Math.random() * 100}%`; // 隨機位置
-        dot.style.left = `${Math.random() * 100}%`; // 隨機位置
-        dot.style.animationDelay = `${Math.random() * 0.15}s`; // 隨機延遲
-        body.appendChild(dot);
-    }
-}
 
 function combineElements() {
     const element1 = document.getElementById('element1').value;
@@ -417,9 +400,6 @@ function combineElements() {
                 learnedWords[newElement] = [newWord, newEmoji];
                 displayElements();
                 displayCombinationOptions();
-                // 移除光點效果
-                const dots = document.querySelectorAll('.light-dot');
-                dots.forEach(dot => dot.remove());
             }, 1700); // 動畫持續2秒
         }
     } else {
